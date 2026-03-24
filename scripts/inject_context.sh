@@ -4,7 +4,7 @@
 # Reads session-specific context state and outputs warning if concerning.
 # Only outputs when context is concerning (caution/warning/critical).
 
-set -euo pipefail
+# No set -euo pipefail — causes hook errors on Linux
 
 # Read hook input to get session ID
 input=$(cat)
@@ -18,7 +18,7 @@ if [ ! -f "$STATE_FILE" ]; then
 fi
 
 # Check file age (must be recent - within 120 seconds)
-FILE_TIME=$(stat -f %m "$STATE_FILE" 2>/dev/null || stat -c %Y "$STATE_FILE" 2>/dev/null || echo 0)
+FILE_TIME=$(stat -c %Y "$STATE_FILE" 2>/dev/null || stat -f %m "$STATE_FILE" 2>/dev/null || echo 0)
 CURRENT_TIME=$(date +%s)
 AGE=$((CURRENT_TIME - FILE_TIME))
 
