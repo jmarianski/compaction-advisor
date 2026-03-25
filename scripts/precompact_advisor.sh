@@ -6,6 +6,14 @@
 
 set -euo pipefail
 
+# Check if hooks are disabled (visual-only mode)
+CONF="$HOME/.claude/compaction-advisor.conf"
+if [ -f "$CONF" ]; then source "$CONF"; fi
+if [ "${COMPACTION_ADVISOR_HOOKS_ENABLED:-true}" = "false" ]; then
+    cat > /dev/null
+    exit 0
+fi
+
 # Read hook input to get session ID
 input=$(cat)
 SESSION_ID=$(echo "$input" | jq -r '.session_id // "default"' | tr -d '[:space:]' | cut -c1-16)
